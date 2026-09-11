@@ -4,7 +4,4 @@ public class InditexException extends RuntimeException {
     public InditexException(String message) {
         super(message);
     }
-
-    public InditexException() {
-    }
 }
