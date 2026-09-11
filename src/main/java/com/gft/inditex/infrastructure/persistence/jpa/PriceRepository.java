@@ -1,6 +1,5 @@
-package com.gft.inditex.repository;
+package com.gft.inditex.infrastructure.persistence.jpa;
 
-import com.gft.inditex.model.h2.Price;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,11 +1,7 @@
-package com.gft.inditex.service.exception;
+package com.gft.inditex.application.exception;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.springframework.http.HttpStatus;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
 public class InditexValidationException extends InditexException {
 
     private final HttpStatus httpStatus;
@@ -14,8 +10,13 @@ public class InditexValidationException extends InditexException {
         super(message);
         this.httpStatus = HttpStatus.BAD_REQUEST;
     }
+
     public InditexValidationException(String message, HttpStatus httpStatus) {
         super(message);
         this.httpStatus = httpStatus;
+    }
+
+    public HttpStatus getHttpStatus() {
+        return httpStatus;
     }
 }

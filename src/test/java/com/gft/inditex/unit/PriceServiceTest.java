@@ -1,8 +1,9 @@
 package com.gft.inditex.unit;
 
-import com.gft.inditex.model.dto.PriceDTO;
-import com.gft.inditex.model.dto.SearchFilterDTO;
-import com.gft.inditex.service.PriceServiceImpl;
+import com.gft.inditex.application.exception.InditexValidationException;
+import com.gft.inditex.application.price.PriceFinderServiceImpl;
+import com.gft.inditex.application.price.PriceQueryRequest;
+import com.gft.inditex.application.price.PriceQueryResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -21,38 +22,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class PriceServiceTest {
 
     @Autowired
-    private PriceServiceImpl priceService;
-
+    private PriceFinderServiceImpl priceService;
 
     @ParameterizedTest
     @MethodSource("productPriceTestArguments")
     @DisplayName("Test product price service")
-    void testProductPriceService(SearchFilterDTO filter, PriceDTO expectedResult) throws Exception {
+    void testProductPriceService(PriceQueryRequest request, PriceQueryResponse expectedResult) throws InditexValidationException {
+        PriceQueryResponse productPrice = priceService.findApplicablePrice(request);
 
-        PriceDTO productPrice = priceService.findProductPrice(filter);
-
-        assertThat(productPrice.getProductId()).isEqualTo(expectedResult.getProductId());
-        assertThat(productPrice.getBrandId()).isEqualTo(expectedResult.getBrandId());
-        assertThat(productPrice.getPriceList()).isEqualTo(expectedResult.getPriceList());
-        assertThat(productPrice.getStartDate()).isEqualTo(expectedResult.getStartDate());
-        assertThat(productPrice.getEndDate()).isEqualTo(expectedResult.getEndDate());
-        assertThat(productPrice.getPrice()).isEqualTo(expectedResult.getPrice());
-        assertThat(productPrice.getCurrency()).isEqualTo(expectedResult.getCurrency());
-
+        assertThat(productPrice.productId()).isEqualTo(expectedResult.productId());
+        assertThat(productPrice.brandId()).isEqualTo(expectedResult.brandId());
+        assertThat(productPrice.priceList()).isEqualTo(expectedResult.priceList());
+        assertThat(productPrice.startDate()).isEqualTo(expectedResult.startDate());
+        assertThat(productPrice.endDate()).isEqualTo(expectedResult.endDate());
+        assertThat(productPrice.price()).isEqualTo(expectedResult.price());
+        assertThat(productPrice.currency()).isEqualTo(expectedResult.currency());
     }
 
     static Stream<Arguments> productPriceTestArguments() {
         return Stream.of(
-                Arguments.of(SearchFilterDTO.builder().productId(35455L).brandId(1L).date(LocalDateTime.parse("2020-06-14T10:00:00")).build(),
-                        PriceDTO.builder().productId(35455L).brandId(1L).priceList(1).startDate(LocalDateTime.parse("2020-06-14T00:00:00")).endDate(LocalDateTime.parse("2020-12-31T23:59:59")).price(35.50).currency("EUR").build()),
-                Arguments.of(SearchFilterDTO.builder().productId(35455L).brandId(1L).date(LocalDateTime.parse("2020-06-14T16:00:00")).build(),
-                        PriceDTO.builder().productId(35455L).brandId(1L).priceList(2).startDate(LocalDateTime.parse("2020-06-14T15:00:00")).endDate(LocalDateTime.parse("2020-06-14T18:30:00")).price(25.45).currency("EUR").build()),
-                Arguments.of(SearchFilterDTO.builder().productId(35455L).brandId(1L).date(LocalDateTime.parse("2020-06-14T21:00:00")).build(),
-                        PriceDTO.builder().productId(35455L).brandId(1L).priceList(1).startDate(LocalDateTime.parse("2020-06-14T00:00:00")).endDate(LocalDateTime.parse("2020-12-31T23:59:59")).price(35.50).currency("EUR").build()),
-                Arguments.of(SearchFilterDTO.builder().productId(35455L).brandId(1L).date(LocalDateTime.parse("2020-06-15T10:00:00")).build(),
-                        PriceDTO.builder().productId(35455L).brandId(1L).priceList(3).startDate(LocalDateTime.parse("2020-06-15T00:00:00")).endDate(LocalDateTime.parse("2020-06-15T11:00:00")).price(30.50).currency("EUR").build()),
-                Arguments.of(SearchFilterDTO.builder().productId(35455L).brandId(1L).date(LocalDateTime.parse("2020-06-16T21:00:00")).build(),
-                        PriceDTO.builder().productId(35455L).brandId(1L).priceList(4).startDate(LocalDateTime.parse("2020-06-15T16:00:00")).endDate(LocalDateTime.parse("2020-12-31T23:59:59")).price(38.95).currency("EUR").build())
+                Arguments.of(new PriceQueryRequest(1L, 35455L, LocalDateTime.parse("2020-06-14T10:00:00")),
+                        new PriceQueryResponse(35455L, 1L, 1, LocalDateTime.parse("2020-06-14T00:00:00"), LocalDateTime.parse("2020-12-31T23:59:59"), 35.50, "EUR")),
+                Arguments.of(new PriceQueryRequest(1L, 35455L, LocalDateTime.parse("2020-06-14T16:00:00")),
+                        new PriceQueryResponse(35455L, 1L, 2, LocalDateTime.parse("2020-06-14T15:00:00"), LocalDateTime.parse("2020-06-14T18:30:00"), 25.45, "EUR")),
+                Arguments.of(new PriceQueryRequest(1L, 35455L, LocalDateTime.parse("2020-06-14T21:00:00")),
+                        new PriceQueryResponse(35455L, 1L, 1, LocalDateTime.parse("2020-06-14T00:00:00"), LocalDateTime.parse("2020-12-31T23:59:59"), 35.50, "EUR")),
+                Arguments.of(new PriceQueryRequest(1L, 35455L, LocalDateTime.parse("2020-06-15T10:00:00")),
+                        new PriceQueryResponse(35455L, 1L, 3, LocalDateTime.parse("2020-06-15T00:00:00"), LocalDateTime.parse("2020-06-15T11:00:00"), 30.50, "EUR")),
+                Arguments.of(new PriceQueryRequest(1L, 35455L, LocalDateTime.parse("2020-06-16T21:00:00")),
+                        new PriceQueryResponse(35455L, 1L, 4, LocalDateTime.parse("2020-06-15T16:00:00"), LocalDateTime.parse("2020-12-31T23:59:59"), 38.95, "EUR"))
         );
     }
 }

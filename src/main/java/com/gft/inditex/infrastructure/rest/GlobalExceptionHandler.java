@@ -1,6 +1,6 @@
-package com.gft.inditex.controller;
+package com.gft.inditex.infrastructure.rest;
 
-import com.gft.inditex.service.exception.InditexValidationException;
+import com.gft.inditex.application.exception.InditexValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

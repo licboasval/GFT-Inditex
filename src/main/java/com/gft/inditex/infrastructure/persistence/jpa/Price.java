@@ -1,4 +1,4 @@
-package com.gft.inditex.model.h2;
+package com.gft.inditex.infrastructure.persistence.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
